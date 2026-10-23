@@ -75,8 +75,11 @@ void agents_put(agents_t *s, const agentsdeck_link_v1_Agent *a)
 			return; // more agents than the panel keeps
 	}
 	*rec = *a;
+	// Most recently active first; agents that updated at the same time keep
+	// the deck's order.
 	int at = 0;
-	while (at < s->count && s->agents[at]->slot <= a->slot)
+	while (at < s->count && (s->agents[at]->updated_at_ms > a->updated_at_ms ||
+				 (s->agents[at]->updated_at_ms == a->updated_at_ms && s->agents[at]->slot <= a->slot)))
 		at++;
 	memmove(&s->agents[at + 1], &s->agents[at], (s->count - at) * sizeof s->agents[0]);
 	memmove(&seen[at + 1], &seen[at], (s->count - at) * sizeof seen[0]);

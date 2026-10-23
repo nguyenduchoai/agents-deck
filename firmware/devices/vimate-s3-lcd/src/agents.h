@@ -1,4 +1,5 @@
-// What the panel knows: the deck's agents (full records, sorted by slot) and
+// What the panel knows: the deck's agents (full records, the most recently
+// active first) and
 // the link's state. The link task writes it, the UI task reads it; both hold
 // the lock while they do. `version` changes with every write, so the UI
 // redraws only when something changed.
@@ -26,7 +27,7 @@ typedef struct {
 	char message[96];     // a short note for the person (answered, refused …)
 	uint32_t message_until_ms;
 	int count;
-	agentsdeck_link_v1_Agent *agents[AGENTS_MAX]; // sorted by slot
+	agentsdeck_link_v1_Agent *agents[AGENTS_MAX]; // most recently active first
 } agents_t;
 
 void agents_init(void);

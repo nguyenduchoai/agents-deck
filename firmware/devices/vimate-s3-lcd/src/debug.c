@@ -32,6 +32,22 @@ static volatile uint32_t frames, perf_since, busy_us, spi_us;
 static volatile int tap_x, tap_y, to_x, to_y;
 static volatile uint32_t tap_from, tap_until;
 
+// n agents named by their age: the higher the number, the older.
+static void fake_agents(int n)
+{
+	agents_t *s = agents_lock();
+	for (int i = 0; i < n && i < AGENTS_MAX; i++) {
+		agentsdeck_link_v1_Agent a = agentsdeck_link_v1_Agent_init_zero;
+		snprintf(a.id, sizeof a.id, "fake%d", i);
+		snprintf(a.title, sizeof a.title, "agent %d", i);
+		a.slot = (uint32_t)(n - 1 - i); // the deck's own order is the reverse of the age
+		a.status = agentsdeck_link_v1_Status_STATUS_IDLE;
+		a.updated_at_ms = 1000000 - i * 1000;
+		agents_put(s, &a);
+	}
+	agents_unlock();
+}
+
 void debug_scan(const uint8_t *data, size_t len)
 {
 	for (size_t i = 0; i < len; i++) {
@@ -49,6 +65,8 @@ void debug_scan(const uint8_t *data, size_t len)
 				tap_x = x, tap_y = y, to_x = x2, to_y = y2;
 				tap_from = now_ms();
 				tap_until = tap_from + 300;
+			} else if (sscanf(line, "!fake %d", &x) == 1) {
+				fake_agents(x);
 			} else if (sscanf(line, "!tap %d %d", &x, &y) == 2) {
 				tap_x = x, tap_y = y, to_x = x, to_y = y;
 				tap_from = now_ms();

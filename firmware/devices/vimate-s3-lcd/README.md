@@ -2,7 +2,7 @@
 
 The deck on Vimate's S3 LCD boards: the 3.5″ one (the board Vimate ships its GENU AI firmware on): a 320×480 ST77922
 touch panel that the case holds sideways, so the screen is 480×320 landscape. Your agents in a 3×2
-grid, each with its critter, hat and status line; scroll for more, tap one for its card. Same UI as
+grid, each with its critter, hat and status line; the most recently active first; swipe up and down for more, tap one for its card. Same UI as
 [t4s3-panel](../t4s3-panel), laid out for the smaller screen.
 
 It subscribes to every agent with all fields. Answering, focusing and interrupting need scope **act**:

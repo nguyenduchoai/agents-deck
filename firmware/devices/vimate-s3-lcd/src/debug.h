@@ -2,7 +2,8 @@
 // port also takes "!snap" (the panel dumps its screen as raw RGB565 after
 // "\0SNAP <w> <h>\n"), "!perf" (frames drawn and where the time went),
 // "!log" (touch and scroll events, as notes), "!tap <x> <y>" (a 150 ms
-// touch there) and "!drag <x1> <y1> <x2> <y2>" (a 300 ms swipe).
+// touch there), "!drag <x1> <y1> <x2> <y2>" (a 300 ms swipe) and
+// "!fake <n>" (n made-up agents, to try scrolling and the order).
 #pragma once
 
 #include <stdbool.h>
