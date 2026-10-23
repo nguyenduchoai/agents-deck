@@ -1,7 +1,7 @@
 // Sitronix touch at 0x55, 16-bit register addresses (as Espressif's
 // esp_lcd_touch_st7123). Register 0x0010 bit 3 says a report has
 // coordinates; the points are 7 bytes each from 0x0014: bit 7 of byte 0 is
-// "valid", x is 14 bits in bytes 0-1 (mirrored against the panel's), y in
+// "valid", x is 14 bits in bytes 0-1 (the panel's columns), y in
 // bytes 2-3. The whole report has to be read, as Vimate's firmware does, or
 // the controller keeps handing back the last one. The bus is shared with the
 // board's ES8311 codec (0x18), which this firmware leaves alone.
@@ -73,8 +73,8 @@ bool touch_read(int *x, int *y)
 		return false;
 	if (read_reg(0x0014, b, 7 * points) != ESP_OK || !(b[0] & 0x80))
 		return false;
-	int px = PANEL_W - 1 - (((b[0] & 0x3F) << 8) | b[1]), py = ((b[2] & 0x3F) << 8) | b[3];
-	px = px > 0 ? px : 0;
+	int px = ((b[0] & 0x3F) << 8) | b[1], py = ((b[2] & 0x3F) << 8) | b[3];
+	px = px < PANEL_W ? px : PANEL_W - 1;
 	py = py < PANEL_H ? py : PANEL_H - 1;
 	*x = FLIP ? PANEL_H - 1 - py : py; // panel to screen, see display_flush()
 	*y = FLIP ? px : PANEL_W - 1 - px;
