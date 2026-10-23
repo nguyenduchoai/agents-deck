@@ -31,7 +31,8 @@ func openPort(path string, baud int) (*os.File, error) {
 		return nil, err
 	}
 	speed := uint64(baud)
-	if err := ioctl(fd, iossiospeed, uintptr(unsafe.Pointer(&speed))); err != nil {
+	// A pty (a bridge such as Bluetooth's) has no baud rate and says ENOTTY.
+	if err := ioctl(fd, iossiospeed, uintptr(unsafe.Pointer(&speed))); err != nil && err != syscall.ENOTTY {
 		syscall.Close(fd)
 		return nil, err
 	}
